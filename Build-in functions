@@ -1,0 +1,209 @@
+Find names of all employees by first name with 'Sa' in their name
+
+SELECT 
+        [FirstName]
+        ,[LastName]
+  FROM [Employees]
+ WHERE [FirstName] LIKE 'Sa%' 
+ 
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 02. Find namesby last name with 'ei' in their name
+ 
+       SELECT 
+              [FirstName]
+              ,[LastName]
+        FROM [Employees]
+       WHERE [LastName] LIKE '%ei%'
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 03. Find first name of all employees with specific department and hiredate
+ 
+       SELECT 
+              [FirstName]
+         FROM [Employees]
+        WHERE ([DepartmentID] IN (3,10)) 
+              AND ([HireDate] BETWEEN '1995-01-01' AND '2005-12-31')
+ 
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 04. Find all employees except engineers
+ 
+         SELECT
+                [FirstName]
+                ,[LastName]
+          FROM [Employees]
+     WHERE NOT ([JobTitle] LIKE '%engineer%')
+ 
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 05. Find towns names with length
+         SELECT 
+                [Name]
+
+           FROM [Towns]
+          WHERE (LEN([Name]) IN (5,6))
+       ORDER BY [Name] ASC
+ 
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 06. Towns starting with 
+ 
+           SELECT 
+                  [TownID]
+                  ,[Name]
+             FROM [Towns]
+            WHERE [Name] LIKE '[M, K, B, E]%'
+         ORDER BY [Name] ASC
+ 
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 07. Find towns NOT starting with
+ 
+           SELECT 
+                  [TownID]
+                  ,[Name]
+             FROM [Towns]
+        WHERE NOT ([Name] LIKE '[R, B, D]%')
+        ORDER BY [Name] ASC
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 08. View with employees hired after...
+ 
+       CREATE VIEW [V_EmployeesHiredAfter2000]
+                   AS
+            SELECT 
+                    [FirstName]
+                    ,[LastName]
+              FROM [Employees]
+             WHERE [HireDate] > '2000-12-31'
+ 
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 09. Length of last name
+ 
+           SELECT 
+                 [FirstName]
+                 ,[LastName]
+            FROM [Employees]
+           WHERE (LEN([LastName])=5)
+
+ 
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 10. Rank employees by salary 
+ 
+       SELECT 
+              [EmployeeID]
+              ,[FirstName]
+              ,[LastName]
+              ,[Salary]
+              ,DENSE_RANK() OVER (PARTITION BY ([Salary]) ORDER BY [EmployeeID] ASC) AS Rank
+         FROM [Employees]
+        WHERE [Salary] BETWEEN 10000 AND 50000
+    ORDER BY [Salary] DESC
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 11. Find all employees with rank 2
+ 
+       SELECT * 
+        FROM 
+                (SELECT 
+                        [EmployeeID]
+                        ,[FirstName]
+                        ,[LastName]
+                        ,[Salary]
+                        ,DENSE_RANK() OVER (PARTITION BY ([Salary]) ORDER BY [EmployeeID] ASC) AS [Rank]
+                   FROM [Employees]
+                  WHERE ([Salary] BETWEEN 10000 AND 50000)
+          )
+           AS [RankingTable]
+
+        WHERE [Rank] = 2
+     ORDER BY [Salary] DESC
+ 
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 12. Countries holding 'A'
+ 
+       SELECT   [CountryName] AS [Country Name]
+                ,[ISOCode]	AS [ISO Code]
+           FROM [Countries]
+          WHERE [CountryName] LIKE '%a%a%a%'
+       ORDER BY [IsoCode]
+ 
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 13. Mix of peak and river names
+          SELECT  [p].[PeakName]
+                  ,[r].[RiverName]
+                  ,LOWER (CONCAT (LEFT(p.[PeakName], LEN(p.[PeakName])-1), r.[RiverName])) AS [Mix]
+            FROM [Peaks] as [p]
+                 ,[Rivers] as [r]
+          WHERE LOWER(RIGHT(p.[PeakName],1)) = LOWER(LEFT(r.[RiverName], 1)) 
+          ORDER BY [Mix]
+ 
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 14. User email providers
+ 
+       SELECT 
+              [UserName]
+              ,SUBSTRING([Email],(CHARINDEX('@', [Email])+1), (((LEN([Email])+1)-((CHARINDEX('@', [Email])+1)))))  AS [Email Provider]
+
+        FROM	[Users]
+       WHERE	[Email] IS NOT NULL
+    ORDER BY  [Email Provider] ASC, [UserName] ASC
+
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 15. Get users and IPs like patterns
+ 
+        SELECT 
+                [UserName],
+                [IPAddress]
+
+          FROM  [Users]
+         WHERE	[IPAddress] LIKE '___.1%.%.___'
+      ORDER BY  [UserName] ASC
+
+ 
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 16. Show all games with duration
+ 
+       SELECT 
+             [Name] AS [Game],
+             CASE 
+                 WHEN DATEPART(HOUR, [Start]) >= 0 AND DATEPART(HOUR, [Start]) < 12 THEN 'Morning'
+                 WHEN DATEPART(HOUR, [Start]) >= 12 AND DATEPART(HOUR, [Start]) < 18 THEN 'Afternoon'
+                 ELSE 'Evening'
+             END	AS [Part of the day],
+             CASE
+                 WHEN [Duration] <= 3 THEN 'Extra Short'
+                 WHEN [Duration] >= 4 AND [Duration] <= 6 THEN 'Short'
+                 WHEN [Duration] > 6 THEN 'Long'
+                 WHEN [Duration] IS NULL THEN 'Extra Long'
+             END AS [Duration]
+      FROM	[Games]
+
+  ORDER BY  [Name] ASC, [Duration] ASC, [Part of the day]ASC
+
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 17. Orders table
+ 
+      SELECT 
+              [ProductName]
+              ,[OrderDate]
+              ,DATEADD(DAY, 3,[OrderDate]) AS [Pay Due]
+              ,DATEADD(MONTH, 1,[OrderDate]) AS [Delievr Due]
+     FROM [Orders]
+ 
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 18. Games from 2011 and 2012 
+ 
+      SELECT TOP(50) [Name],
+             FORMAT ([Start], 'yyyy-MM-dd') AS 'Start'
+               FROM [Games]
+              WHERE YEAR([START]) IN (2011,2012)
+           ORDER BY [Start], [Name]
+ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
