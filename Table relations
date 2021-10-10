@@ -1,0 +1,208 @@
+01. One to many relationship
+
+      CREATE TABLE [Manufacturers](
+              [Id] INT IDENTITY PRIMARY KEY,
+            [Name] NVARCHAR(50) NOT NULL,
+   [EstablishedOn] DATETIME2)
+
+      CREATE TABLE [Models](
+              [Id] INT  PRIMARY KEY,
+            [Name] NVARCHAR(50) NOT NULL,
+  [ManufacturerID] INT,
+
+                   CONSTRAINT FK_MODELSMANUFACTURER
+                   FOREIGN KEY ([ManufacturerID])
+                   REFERENCES dbo.Manufacturers([Id])
+      )
+
+     INSERT INTO [Manufacturers](
+                 [Name]
+                 ,[EstablishedOn]
+                 )
+          VALUES 
+                ('BMW', '07/03/1916'),
+                ('Tesla', '01/01/2003'),
+                ('Lada','01/05/1966')
+
+    INSERT INTO [Models](
+                [Id]
+                ,[Name]
+                ,[ManufacturerID])
+        VALUES  
+                (101, 'X1', 1),
+                (102, 'i6', 1),
+                (103, 'Model S', 2),
+                (104, 'Model X', 2),
+                (105, 'Model 3', 2),
+                (106, 'Nova', 3)
+                
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+02. Many-to-many relationships
+
+   CREATE TABLE [Students](
+                [StudentID] INT IDENTITY PRIMARY KEY,
+                [Name] NVARCHAR(50) NOT NULL,
+                )
+
+  CREATE TABLE [Exams](
+               [ExamId] INT  PRIMARY KEY,
+               [Name] NVARCHAR(50) NOT NULL)
+
+  CREATE TABLE [StudentsExams](
+               [StudentID] INT,
+               [ExamID] INT,
+
+              CONSTRAINT FK_StudentId
+                  FOREIGN KEY ([StudentID])
+                  REFERENCES dbo.Students([StudentID]),
+              CONSTRAINT FK_ExamsId
+                  FOREIGN KEY ([ExamID])
+                  REFERENCES dbo.Exams([ExamId]),
+
+              CONSTRAINT PK_StudentsExams
+                PRIMARY KEY ([StudentID], [ExamID])
+)
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+03. Self-referncing 
+
+    CREATE TABLE [Teachers](
+                 [TeacherID] INT PRIMARY KEY
+                 ,[Name] NVARCHAR(50) NOT NULL
+                 ,[ManagerID] INT 
+
+                CONSTRAINT FK_TeacherManagerId
+                    FOREIGN KEY ([ManagerID])
+                    REFERENCES dbo.Teachers([TeacherID]),
+
+        )
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+04. Online database store
+
+        CREATE TABLE [Cities](
+                     [CityID] INT IDENTITY PRIMARY KEY
+                     ,[Name] NVARCHAR (50) NOT NULL)
+
+        CREATE TABLE [Customers](
+                     [CustomerID] INT IDENTITY PRIMARY KEY
+                     ,[Name] NVARCHAR (50) NOT NULL
+                     ,[Birthday] DATE NOT NULL
+                     ,[CityID] INT NOT NULL
+
+                      CONSTRAINT FK_CusstomerCityID
+                      FOREIGN KEY ([CityID])
+                      REFERENCES dbo.Cities([CityID]) 
+)
+
+        CREATE TABLE [Orders](
+                     [OrderID] INT IDENTITY PRIMARY KEY
+                     ,[CustomerID] INT NOT NULL
+
+                     CONSTRAINT FK_OrderCustomerID
+                     FOREIGN KEY ([CustomerID])
+                     REFERENCES dbo.Customers([CustomerID]) 
+)
+
+        CREATE TABLE [ItemTypes](
+                     [ItemTypeID] INT IDENTITY PRIMARY KEY
+                     ,[Name] NVARCHAR (50) NOT NULL)
+
+        CREATE TABLE [Items](
+                     [ItemID] INT IDENTITY PRIMARY KEY
+                     ,[Name] NVARCHAR (50) NOT NULL
+                     ,[ItemTypeID] INT NOT NULL
+
+                      CONSTRAINT FK_ItemsTypesID
+                      FOREIGN KEY ([ItemTypeID])
+                      REFERENCES dbo.ItemTypes([ItemTypeID])
+)
+
+        CREATE TABLE [OrderItems](
+                     [OrderID] INT NOT NULL
+                     ,[ItemID] INT NOT NULL
+
+                    CONSTRAINT FK_OrderIdItems
+                    FOREIGN KEY ([OrderID])
+                    REFERENCES dbo.Orders([OrderID]) 
+
+                    ,CONSTRAINT FK_OrderItemsID
+                    FOREIGN KEY ([ItemID])
+                    REFERENCES dbo.Items([ItemID]) 
+
+                    ,CONSTRAINT PK_OrdersItems
+                      PRIMARY KEY ([OrderID], [ItemID])
+)
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+05. University database
+
+      CREATE TABLE [Majors](
+                   [MajorID] INT IDENTITY PRIMARY KEY
+                   ,[Name] NVARCHAR (50) NOT NULL
+                   )
+
+      CREATE TABLE [Subjects](
+                   [SubjectID] INT IDENTITY PRIMARY KEY
+                   ,[SubjectName] NVARCHAR (50) NOT NULL
+                   )
+
+      CREATE TABLE [Students](
+                   [StudentID] INT IDENTITY PRIMARY KEY
+                   ,[StudentNumber] NVARCHAR (50) NOT NULL
+                   ,[StudentName] NVARCHAR (50) NOT NULL
+                   ,[MajorID] INT 
+
+                  CONSTRAINT FK_Student_Major
+                  FOREIGN KEY ([MajorID])
+                  REFERENCES dbo.Majors([MajorID]) 
+                  )
+
+    CREATE TABLE [Agenda](
+                 [StudentID] INT NOT NULL
+                 ,[SubjectID] INT 
+
+                 CONSTRAINT FK_SubjectID_Students
+                 FOREIGN KEY ([SubjectID])
+                 REFERENCES dbo.Subjects([SubjectID])
+
+                ,CONSTRAINT FK_Subject_StudentID
+                FOREIGN KEY ([StudentID])
+                REFERENCES dbo.Students([StudentID])
+
+                ,CONSTRAINT PK_OrdersItems
+                  PRIMARY KEY ([StudentID], [SubjectID])
+                )
+
+    CREATE TABLE [Payments](
+                 [PaymentID] INT IDENTITY PRIMARY KEY
+                 ,[PaymentDate] DATETIME2 NOT NULL
+                 ,[PaymentAmount] FLOAT(2)
+                 ,[StudentID] INT NOT NULL
+
+                CONSTRAINT FK_Payment_StudentID
+                FOREIGN KEY ([StudentID])
+                REFERENCES dbo.Students([StudentID])
+               )
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+06. Peaks in Rila
+
+      SELECT 
+             [MountainRange]
+             ,[PeakName]
+             ,[Elevation] 
+        FROM [Peaks] as [p]
+        JOIN [Mountains] AS [m] ON [m].[Id] = [p].[MountainId]
+
+      WHERE [MountainRange] = 'Rila'
+      ORDER BY [p].[Elevation] DESC
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
