@@ -1,0 +1,287 @@
+
+01. Create table people and insert data
+CREATE TABLE [People](
+         [Id] NT PRIMARY KEY IDENTITY,
+       [Name] NVARCHAR(200) NOT NULL,
+    [Picture] VARBINARY (MAX),
+              CHECK (DATALENGTH([Picture])<=2000000),
+     [Height] FLOAT(2),
+     [Weight] FLOAT(2),
+     [Gender] NCHAR(1) CONSTRAINT one_letter CHECK(Gender in ('f','m')),
+  [Birthdate] DATETIME2 NOT NULL,
+  [Biography] NVARCHAR(MAX)
+)
+INSERT INTO 
+        [People] ([Name]
+       ,[Picture]
+       ,[Height]
+       ,[Weight]
+       ,[Gender]
+       ,[Birthdate]
+       ,[Biography]) VALUES
+                    ('Kevin', NULL, 1.65, 80, 'm', '1999-02-13', 'Bio')
+                    ,('Bob', 15, 1.80, 75, 'm', '1948-05-26', 'Test')
+                    ,('Steward', NULL,2,95, 'm', '1978-09-15', 'Nike')
+                    ,('Mary', 888, 1.70, 55, 'f', '1995-04-16', 'Life')
+                    ,('Hary', 333, 1.75, 56, 'f', '1989-08-12', 'Hack')
+                    
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+02. Create table users and insert data
+CREATE TABLE [Users](
+                 [Id] BIGINT PRIMARY KEY IDENTITY,
+               [Name] VARCHAR(30) UNIQUE NOT NULL,
+           [Password] VARCHAR(26) NOT NULL,
+     [ProfilePicture] VARBINARY (MAX),
+                      CHECK (DATALENGTH([ProfilePicture])<=9000),
+      [LastLoginTime] DATETIME2 NOT NULL,
+          [IsDeleted] BIT NOT NULL
+      )
+INSERT INTO 
+        [Users] ([Name]
+       ,[Password]
+       ,[ProfilePicture]
+       ,[LastLoginTime]
+       ,[IsDeleted]) VALUES
+                  ('Kevin', 'ahehah', 165, '2012-02-13', 0),
+                  ('Bob', 'dhdhshjjd', 180, '2020-05-26', 0),
+                  ('Steward', 'hjdiejdi',255, '2019-09-15', 1),
+                  ('Mary', 'hddadnasnd', 170, '2021-04-16', 1),
+                  ('Hary', 'eee1111', 175,'2014-08-12', 0)
+                  
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+ 03. Movies database
+ CREATE TABLE [Directors](
+             [Id] INT PRIMARY KEY IDENTITY
+  ,[DirectorName] NVARCHAR (50) NOT NULL
+         ,[Notes] NVARCHAR (MAX)
+)
+
+CREATE TABLE [Genres](
+             [Id] INT PRIMARY KEY IDENTITY
+     ,[GenreName] NVARCHAR (50) NOT NULL
+         ,[Notes] NVARCHAR (MAX)
+)
+
+CREATE TABLE [Categories](
+            [Id] INT PRIMARY KEY IDENTITY
+ ,[CategoryName] NVARCHAR (50) NOT NULL
+        ,[Notes] NVARCHAR (MAX)
+)
+
+CREATE TABLE [Movies](
+            [Id] INT PRIMARY KEY  IDENTITY
+        ,[Title] NVARCHAR (50) NOT NULL
+   ,[DirectorId] INT FOREIGN KEY ([DirectorId])
+                 REFERENCES dbo.Directors (Id)
+                 ON DELETE CASCADE
+                 ON UPDATE CASCADE
+,[CopyrightYear] DATETIME2
+       ,[Length] INT
+      ,[GenreId] INT FOREIGN KEY ([GenreId])
+                 REFERENCES dbo.Genres (Id)
+                 ON DELETE CASCADE
+                 ON UPDATE CASCADE
+  ,[CategoryId] INT FOREIGN KEY ([CategoryId])
+                REFERENCES dbo.Categories (Id)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE
+      ,[Rating] FLOAT(2)
+       ,[Notes] NVARCHAR (MAX)
+)	
+
+INSERT INTO Directors ([DirectorName], [Notes])
+     VALUES 
+            ('Kevin', 'Has ten movies')
+            ,('Smith','Has no movie')
+            ,('Stew', 'Many movies in different field')
+            ,('Rebecca','Has no experience')
+            ,('Mary',NUll)
+
+INSERT INTO Genres([GenreName], [Notes])
+VALUES 
+            ('Drama', 'Has ten movies')
+            ,('Tragedy','Has no movie')
+            ,('Comedy', 'Funny')
+            ,('Triller',NUll)
+            ,('Horror',NUll)
+
+INSERT INTO Categories([CategoryName], [Notes])
+VALUES 
+          ('Movie', 'Has ten movies')
+          ,('ShortMovie','Has no movie')
+          ,('TVSHows', 'Funny')
+          ,('DocumentarySeries',NUll)
+          ,('Theaters',NUll)
+
+INSERT INTO Movies(
+         [Title]
+   ,[DirectorId]
+,[CopyrightYear]
+       ,[Length]
+      ,[GenreId]
+   ,[CategoryId]
+       ,[Rating]
+        ,[Notes]
+        )
+VALUES
+          ('War1',1,'01-02-2005',59, 1, 1, 5,'So-so')
+          ,('War2',2,'02-02-2005',120, 2, 2,3.5,'It can be better')
+          ,('War3',5,'03-02-2005',40, 5, 5, 8.9,'Awesome')
+          ,('War4',3,'04-02-2005',145, 3, 3, 10, 'Awesome')
+          ,('War5',4,'05-02-2005',67,4,4, 5.6,'Not bad')
+ 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+04. Create tables and insert data
+ CREATE TABLE [Categories](
+            [Id] INT PRIMARY KEY IDENTITY
+ ,[CategoryName] NVARCHAR (50) NOT NULL
+    ,[DailyRate] FLOAT (2) 
+   ,[WeeklyRate] FLOAT (2) 
+  ,[MonthlyRate] FLOAT (2) 
+  ,[WeekendRate] FLOAT (2) 
+)
+CREATE TABLE [Cars](
+            [Id] INT PRIMARY KEY IDENTITY
+  ,[PlateNumber] NVARCHAR (20) NOT NULL
+  ,[Manufacturer] NVARCHAR (50) NOT NULL
+         ,[Model] NVARCHAR (50) NOT NULL
+       ,[CarYear] NVARCHAR (10) 
+    ,[CategoryId] INT FOREIGN KEY ([CategoryId])
+                  REFERENCES dbo.Categories (Id)
+                  ON DELETE CASCADE
+                  ON UPDATE CASCADE
+         ,[Doors] TINYINT NOT NULL
+       ,[Picture] VARBINARY (MAX) 
+     ,[Condition] NVARCHAR (50) 
+     ,[Available] NCHAR(1) 
+                  CONSTRAINT one_letter CHECK(Available in ('Y','N')) NOT NULL 
+)
+
+CREATE TABLE [Employees](
+              [Id] INT PRIMARY KEY IDENTITY
+      ,[FirstName] NVARCHAR (50) NOT NULL
+       ,[LastName] NVARCHAR (50) NOT NULL
+          ,[Title] NVARCHAR (50) NOT NULL
+          ,[Notes] NVARCHAR (MAX)
+)
+
+
+CREATE TABLE [Customers](
+                  [Id] INT PRIMARY KEY  IDENTITY
+,[DriverLicenceNumber] NVARCHAR (50) NOT NULL
+           ,[FullName] NVARCHAR (50) NOT NULL
+            ,[Address] NVARCHAR (50) 
+               ,[City] NVARCHAR (50) NOT NULL
+            ,[ZIPCode] NVARCHAR (50) 
+              ,[Notes] NVARCHAR (MAX)
+)	
+
+CREATE TABLE [RentalOrders](
+               [Id] INT PRIMARY KEY IDENTITY
+      ,[EmployeeId] INT FOREIGN KEY ([EmployeeId])
+                    REFERENCES dbo.Employees (Id)
+                    ON DELETE CASCADE
+                    ON UPDATE CASCADE
+      ,[CustomerId] INT FOREIGN KEY ([CustomerId])
+                    REFERENCES dbo.Customers (Id)
+                    ON DELETE CASCADE
+                    ON UPDATE CASCADE
+           ,[CarId] INT FOREIGN KEY ([CarId])
+                    REFERENCES dbo.Cars(Id)
+                    ON DELETE CASCADE
+                    ON UPDATE CASCADE
+       ,[TankLevel] NVARCHAR (50) 
+,[KilometrageStart] INT NOT NULL
+  ,[KilometrageEnd] INT NOT NULL
+,[TotalKilometrage] AS ([KilometrageEnd] - [KilometrageStart])
+       ,[StartDate] DATETIME2 NOT NULL
+         ,[EndDate] DATETIME2 NOT NULL
+       ,[TotalDays] AS DATEDIFF(DAY, StartDate, EndDate)
+     ,[RateApplied] FLOAT (2) NOT NULL
+         ,[TaxRate] FLOAT(2) NOT NULL
+     ,[OrderStatus] NVARCHAR (50) 
+       ,[Available] NVARCHAR (MAX)
+)
+        INSERT INTO Categories ([CategoryName], [DailyRate], [WeekLyRate], [MonthlyRate], [WeekendRate]) 
+             VALUES 
+                    ('Car', 20, 120, 500, 42.50),
+                    ('Bus', 250, 1600, 6000, 489.99),
+                    ('Truck', 500, 3000, 11900, 949.90)
+       INSERT INTO Cars ([PlateNumber], [Manufacturer], [Model], [CarYear], [CategoryId], [Doors], [Picture], [Condition], [Available]) 
+            VALUES
+                    ('123456ABCD', 'Mazda', 'CX-5', 2016, 1, 5, 123456, 'Perfect', 'Y'),
+                    ('asdafof145', 'Mercedes', 'Tourismo', 2017, 2, 3, 99999, 'Perfect', 'Y'),
+                    ('asdp230456', 'MAN', 'TGX', 2016, 3, 2, 123456, 'Perfect', 'N')
+
+      INSERT INTO Employees ([FirstName], [LastName], [Title], [Notes]) 
+           VALUES 
+                    ('Ivan', 'Ivanov', 'Seller', 'I am Ivan'),
+                    ('Georgi', 'Georgiev', 'Seller', 'I am Gosho'),
+                    ('Mitko', 'Mitkov', 'Manager', 'I am Mitko')
+
+      INSERT INTO Customers ([DriverLicenceNumber], [FullName], [Address], [City], [ZIPCode], [Notes])
+           VALUES 
+                    ('123456789', 'Gogo Gogov', 'Tea 5', 'Sofia', '1233', 'Good driver'),
+                    ('347645231', 'Mara Mareva', 'Bee 14', 'Plovdiv', '5678', 'Bad driver'),
+                    ('123574322', 'Strahil Strahilov', 'Hope 4', 'Varna', '5689', 'Good driver')
+
+      INSERT INTO RentalOrders ([EmployeeId], [CustomerId], [CarId], [TankLevel], [KilometrageStart], [KilometrageEnd], [StartDate], [EndDate], [RateApplied], [TaxRate]) 
+           VALUES 
+                    (1, 1, 1, 54, 2189, 2456, '2017-11-05', '2017-11-08', 6, 9),
+                    (2, 2, 2, 22, 13565, 14258, '2017-11-06', '2017-11-11', 2, 9),
+                    (3, 3, 3, 180, 1202, 1964, '2017-11-09', '2017-11-12', 9, 9)
+                    
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+05. Basic select all fields and order them
+    SELECT * 
+      FROM [Towns]
+  ORDER BY [Name] ASC
+    SELECT *
+      FROM [Departments]
+  ORDER BY [Name] ASC
+    SELECT * 
+      FROM [Employees]
+  ORDER BY [Salary] DESC
+  
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+06.Basic select some fields 
+
+    SELECT [Name] 
+      FROM Towns
+  ORDER BY [Name] ASC
+
+    SELECT [Name]  
+      FROM [Departments]
+  ORDER BY [Name] ASC
+
+    SELECT [FirstName]
+           ,[LastName]
+           ,[JobTitle]
+           ,[Salary]
+      FROM [Employees]
+  ORDER BY [Salary] DESC
+  
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+07. Increase salary
+
+  UPDATE [Employees]
+     SET Salary = Salary *1.10;
+
+  SELECT [Salary]
+    FROM [Employees]
+    
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+08. Decrease tax rate
+
+  UPDATE Payments
+     SET TaxRate = TaxRate*0.97;
+
+  SELECT [TaxRate]
+    FROM [Payments]
